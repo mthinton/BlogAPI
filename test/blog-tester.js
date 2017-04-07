@@ -16,12 +16,20 @@ describe('blog-posts', function(){
 		return closeServer();
 	});
 
-	it('should list blog recipes on GET', function(){
-		return chai.request(app)
-		.get('/blog-posts')
-		.then(function(res){
-			res.should.be.json;
-
-		})
-	})
+  it('should list items on GET', function(done) {
+    chai.request(app)
+      .get('/blog-posts')
+      .end(function(err, res) {
+        res.should.have.status(200);
+        res.should.be.json;
+        res.body.should.be.a('array');
+        res.body.length.should.be.above(0);
+        res.body.forEach(function(item) {
+          item.should.be.a('object');
+          item.should.have.all.keys(
+            'id', 'title', 'content', 'author', 'publishDate')
+        });
+      });
+    done();
+  });
 })
