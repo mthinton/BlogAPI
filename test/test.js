@@ -42,4 +42,45 @@ describe('blog-posts', function(){
       res.body.should.have.all.keys('id', 'title', 'content', 'author', 'publishDate')
     });
   });
+
+  it('should error if POST missing expected values', function(done) {
+    const badRequestData = {};
+    chai.request(app)
+      .post('/blog-posts')
+      .send(badRequestData)
+      .end(function(err, res) {
+        res.should.have.status(400);
+        done();
+      });
+  });
+
+  it('should update blog posts on PUT', function(){
+    const updateData = {author: 'Javon Harper', title: 'AKA we will'};
+    return chai.request(app)
+    .get('/blog-posts')
+    .then(function(res){
+      updateData.id = res.body[0].id;
+      return chai.request(app)
+      .put(`/blog-posts/${updateData.id}`)
+      .send(updateData)
+    })
+    .then(function(res){
+      res.should.have.status(200);
+      res.should.be.json;
+      res.body.should.be.a('object')
+    });
+  });
+
+  it('should delete blog posts on DELETE', function(){
+    return chai.request(app)
+    .get('/blog-posts')
+    .then(function(res){
+      return chai.request(app)
+      .delete(`/blog-posts/${res.body[0].id}`);
+    })
+    .then(function(res){
+      res.should.have.status(204);
+    });
+  });
+
 })
