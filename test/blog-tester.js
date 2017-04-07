@@ -20,7 +20,6 @@ describe('blog-posts', function(){
 		return chai.request(app)
 		.get('/blog-posts')
 		.then(function(res){
-			res.should.have.status(200);
 			res.should.be.json;
 
 		})
